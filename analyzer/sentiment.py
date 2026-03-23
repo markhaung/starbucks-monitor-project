@@ -48,25 +48,26 @@ def _build_prompt(articles):
         articles_text += "    來源: {}\n".format(article['source'])
         articles_text += "    摘要: {}\n".format(article['snippet'][:200])
 
-    prompt = """你是一位品牌輿情分析專家。以下是今日搜集到的 Starbucks（星巴克）相關新聞文章。
-請分析每篇文章的情感傾向，並提供整體摘要。
+    prompt = """你是一位頂尖的品牌公關與輿情分析專家。以下是今日搜集到的 Starbucks（星巴克）相關新聞與文章摘要。
+請針對這些內容進行深度的情感分析、話題提取，並提供專業的商業洞察。
 
 {}
 
-請用以下 JSON 格式回覆（直接輸出 JSON，不要加任何說明文字或 markdown 標記）：
+請務必精準輸出為以下 JSON 格式（直接輸出 JSON，絕對不要加任何說明文字或 markdown 標記）：
 {{
-    "overall_summary": "今日星巴克整體輿情摘要（2-3 句話，用繁體中文）",
+    "overall_summary": "請提供一份約 150-200 字的深度輿情摘要。必須總結今日最熱門的事件、整體消費者情緒趨勢、以及主要媒體風向（請用語專業、段落分明）。",
+    "business_insight": "請根據今日新聞，提出 2 到 3 點具體的『行銷建議』或『公關危機處理建議』（條列式說明）。",
     "positive_count": 正面文章數量,
     "negative_count": 負面文章數量,
     "neutral_count": 中立文章數量,
-    "key_topics": ["關鍵議題1", "關鍵議題2", "關鍵議題3"],
-    "risk_alert": "若有重要負面事件請說明，否則留空字串",
+    "key_topics": ["核心話題1", "核心話題2", "核心話題3", "核心話題4"],
+    "risk_alert": "若偵測到食安、公關危機、客訴炎上等負面事件，請詳細說明警示。若天下太平請留空字串。",
     "articles": [
         {{
             "index": 1,
             "sentiment": "正面",
             "score": 75,
-            "brief": "一句話描述"
+            "brief": "請用約 20-30 字，深入點評此篇文章對品牌的具體影響或核心亮點"
         }}
     ]
 }}""".format(articles_text)
@@ -108,6 +109,7 @@ def _parse_result(result_text, articles):
 
     return {
         "overall_summary": result.get("overall_summary", ""),
+        "business_insight": result.get("business_insight", ""),
         "positive_count": result.get("positive_count", 0),
         "negative_count": result.get("negative_count", 0),
         "neutral_count": result.get("neutral_count", 0),
@@ -197,6 +199,7 @@ def _mock_analysis(articles):
 
     return {
         "overall_summary": "今日共搜集到 {} 篇相關文章。但由於 AI 服務目前達到流量限制（或連線失敗），此次暫時無法進行情感分析。請稍後再試。".format(len(articles)),
+        "business_insight": "",
         "positive_count": 0,
         "negative_count": 0,
         "neutral_count": len(articles),
@@ -210,6 +213,7 @@ def _empty_result():
     """空結果"""
     return {
         "overall_summary": "今日未搜集到相關文章。",
+        "business_insight": "",
         "positive_count": 0,
         "negative_count": 0,
         "neutral_count": 0,

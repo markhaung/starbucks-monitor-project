@@ -50,6 +50,7 @@ def generate_report(analysis_result: dict, output_dir: str) -> str:
         report_date=report_date,
         generated_at=generated_at,
         overall_summary=analysis_result.get("overall_summary", ""),
+        business_insight=analysis_result.get("business_insight", ""),
         total_count=total_count,
         positive_count=positive_count,
         negative_count=negative_count,
@@ -81,6 +82,11 @@ def generate_report(analysis_result: dict, output_dir: str) -> str:
     md_content += "## 📝 整體摘要\n"
     md_content += f"{analysis_result.get('overall_summary', '')}\n\n"
     
+    business_insight = analysis_result.get("business_insight", "")
+    if business_insight:
+        md_content += "## 💡 商業洞察與建議\n"
+        md_content += f"{business_insight}\n\n"
+        
     topics_list = analysis_result.get("key_topics", [])
     if topics_list:
         md_content += "## 🏷️ 關鍵議題\n"

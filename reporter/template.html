@@ -206,6 +206,14 @@
             <p>{{ overall_summary }}</p>
         </div>
 
+        {% if business_insight %}
+        <!-- Business Insight -->
+        <div class="summary-card" style="border-left: 4px solid #00d4aa;">
+            <h2>💡 AI 商業與公關洞察</h2>
+            <p style="white-space: pre-wrap;">{{ business_insight }}</p>
+        </div>
+        {% endif %}
+
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card stat-total">
