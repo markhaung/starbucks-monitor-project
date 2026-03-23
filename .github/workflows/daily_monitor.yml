@@ -10,6 +10,8 @@ on:
 jobs:
   run-monitor:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: 下載你的專案程式碼
@@ -36,3 +38,11 @@ jobs:
         LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
       run: |
         python main.py --now
+
+    - name: 備份報告檔案回傳至 Github (備份機器人)
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action 自動備份"
+        git add reports/
+        git commit -m "Auto-backup daily report" || echo "No changes to commit"
+        git push

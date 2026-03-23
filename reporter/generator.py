@@ -69,5 +69,41 @@ def generate_report(analysis_result: dict, output_dir: str) -> str:
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"  📄 報告已產生: {filepath}")
+    # 產生 Obsidian 專用 Markdown 報告
+    md_content = f"# ☕ Starbucks 輿情日報 ({report_date})\n\n"
+    md_content += f"**產生時間:** {generated_at}\n\n"
+    md_content += "## 📊 今日統計\n"
+    md_content += f"- **總文章數:** {total_count} 篇\n"
+    md_content += f"- 🟢 **正面:** {positive_count} 篇 ({positive_pct}%)\n"
+    md_content += f"- 🔴 **負面:** {negative_count} 篇 ({negative_pct}%)\n"
+    md_content += f"- 🟡 **中立:** {neutral_count} 篇 ({neutral_pct}%)\n\n"
+    
+    md_content += "## 📝 整體摘要\n"
+    md_content += f"{analysis_result.get('overall_summary', '')}\n\n"
+    
+    topics_list = analysis_result.get("key_topics", [])
+    if topics_list:
+        md_content += "## 🏷️ 關鍵議題\n"
+        for t in topics_list:
+            md_content += f"- {t}\n"
+        md_content += "\n"
+        
+    risk_text = analysis_result.get("risk_alert", "")
+    if risk_text:
+        md_content += "## 🚨 風險警示\n"
+        md_content += f"> {risk_text}\n\n"
+        
+    md_content += "## 📰 相關文章列表\n"
+    for i, a in enumerate(articles, 1):
+        md_content += f"### {i}. [{a.get('title', '無標題')}]({a.get('link', '#')})\n"
+        md_content += f"- **來源:** {a.get('source', '未知')}\n"
+        md_content += f"- **時間:** {a.get('pub_date', '未知')}\n"
+        md_content += f"- **情感:** {a.get('sentiment', '中立')}\n\n"
+
+    md_filename = f"starbucks_report_{report_date}.md"
+    md_filepath = os.path.join(output_dir, md_filename)
+    with open(md_filepath, "w", encoding="utf-8") as f:
+        f.write(md_content)
+
+    print(f"  📄 報告已產生: \n    HTML: {filepath}\n    Markdown: {md_filepath}")
     return filepath
