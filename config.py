@@ -22,8 +22,9 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-    # Line Notify
-    LINE_NOTIFY_TOKEN = os.getenv("LINE_NOTIFY_TOKEN", "")
+    # Line Messaging API
+    LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")
+    LINE_USER_ID = os.getenv("LINE_USER_ID", "")
 
     # Telegram Bot
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
@@ -48,8 +49,8 @@ class Config:
         warnings = []
         if not cls.OPENAI_API_KEY:
             warnings.append("⚠️  OPENAI_API_KEY 未設定，分析功能將無法使用")
-        if not cls.LINE_NOTIFY_TOKEN:
-            warnings.append("⚠️  LINE_NOTIFY_TOKEN 未設定，Line 通知將無法發送")
+        if not cls.LINE_CHANNEL_ACCESS_TOKEN or not cls.LINE_USER_ID:
+            warnings.append("⚠️  LINE_CHANNEL_ACCESS_TOKEN 或 LINE_USER_ID 未設定，Line 通知將無法發送")
         if not cls.TELEGRAM_BOT_TOKEN or not cls.TELEGRAM_CHAT_ID:
             warnings.append("⚠️  TELEGRAM 設定不完整，Telegram 通知將無法發送")
         return warnings

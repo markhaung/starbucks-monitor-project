@@ -57,10 +57,20 @@ def fetch_tavily_news(keywords, api_key, max_results=20):
                     except Exception:
                         published = published[:16]
 
+                # 提取來源
+                source = item.get("source")
+                if not source:
+                    # 如果沒有來源名稱，從網址擷取主網域
+                    from urllib.parse import urlparse
+                    try:
+                        source = urlparse(article_url).netloc.replace("www.", "")
+                    except:
+                        source = "網路新聞"
+
                 all_articles.append({
                     "title": item.get("title", ""),
                     "link": article_url,
-                    "source": item.get("source", "未知來源"),
+                    "source": source,
                     "published_date": published,
                     "snippet": item.get("content", "")[:300],
                     "keyword": keyword,

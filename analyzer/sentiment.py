@@ -193,14 +193,14 @@ def _mock_analysis(articles):
     for article in articles:
         article["sentiment"] = "中立"
         article["sentiment_score"] = 50
-        article["analysis_brief"] = "（API 未設定，模擬結果）"
+        article["analysis_brief"] = "（API 呼叫失敗或遭遇流量限制，無實際分析）"
 
     return {
-        "overall_summary": "（API 未設定）今日共搜集到 {} 篇相關文章，尚未進行實際情感分析。".format(len(articles)),
+        "overall_summary": "今日共搜集到 {} 篇相關文章。但由於 AI 服務目前達到流量限制（或連線失敗），此次暫時無法進行情感分析。請稍後再試。".format(len(articles)),
         "positive_count": 0,
         "negative_count": 0,
         "neutral_count": len(articles),
-        "key_topics": ["待分析"],
+        "key_topics": ["等待分析"],
         "risk_alert": "",
         "articles": articles,
     }

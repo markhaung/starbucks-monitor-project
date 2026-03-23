@@ -77,8 +77,13 @@ def run_pipeline():
     # ─── Step 4：通知 ─────────────────────────────
     print("\n📢 Step 4: 發送通知...")
 
-    # Line Notify
-    send_line_notification(Config.LINE_NOTIFY_TOKEN, analysis_result, report_path)
+    # Line
+    send_line_notification(
+        Config.LINE_CHANNEL_ACCESS_TOKEN,
+        Config.LINE_USER_ID,
+        analysis_result,
+        report_path,
+    )
 
     # Telegram Bot
     send_telegram_notification(
