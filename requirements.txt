@@ -1,0 +1,7 @@
+feedparser
+requests
+beautifulsoup4
+openai==0.28.1
+Jinja2
+APScheduler
+python-dotenv
