@@ -16,7 +16,7 @@ class Config:
 
     # Google Gemini（情感分析）
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
     # OpenAI（備用，若有設定則優先）
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

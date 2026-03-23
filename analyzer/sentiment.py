@@ -6,7 +6,7 @@ import json
 import requests
 
 
-def analyze_articles(articles, gemini_api_key="", gemini_model="gemini-1.5-flash",
+def analyze_articles(articles, gemini_api_key="", gemini_model="gemini-2.0-flash",
                      openai_api_key="", openai_model="gpt-4o-mini"):
     """
     使用 LLM 對文章進行批次情感分析
