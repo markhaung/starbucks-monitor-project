@@ -5,278 +5,411 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Starbucks 輿情日報 - {{ report_date }}</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #1a1a2e, #16213e);
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 24px;
+        :root {
+            --sbx-green: #00704A;
+            --sbx-green-light: #1e3932;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(20px);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-glow: rgba(0, 112, 74, 0.4);
+            --positive: #10b981;
+            --negative: #ef4444;
+            --neutral: #eab308;
         }
 
-        .container { max-width: 960px; margin: 0 auto; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft JhengHei', sans-serif;
+            background: #0f172a;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 112, 74, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(30, 57, 50, 0.2), transparent 25%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 24px;
+            line-height: 1.6;
+        }
+
+        .container { 
+            max-width: 1024px; 
+            margin: 0 auto; 
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Glassmorphism Base for Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        }
 
         /* Header */
         .header {
             text-align: center;
-            padding: 40px 24px;
-            background: linear-gradient(135deg, rgba(0,106,78,0.3), rgba(30,57,50,0.5));
-            border-radius: 20px;
-            border: 1px solid rgba(0,150,100,0.2);
-            margin-bottom: 24px;
-            backdrop-filter: blur(10px);
+            padding: 48px 32px;
+            background: linear-gradient(135deg, rgba(30,57,50,0.8), rgba(0,112,74,0.4));
+            position: relative;
+            overflow: hidden;
         }
-        .header .logo { font-size: 48px; margin-bottom: 8px; }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            animation: rotate 60s linear infinite;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        
+        .header .logo { font-size: 56px; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
         .header h1 {
-            font-size: 28px;
-            background: linear-gradient(90deg, #00d4aa, #00b894);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-        .header .date { color: #8a9bb0; font-size: 14px; }
-
-        /* Summary Card */
-        .summary-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        .summary-card h2 {
-            font-size: 18px;
-            color: #00d4aa;
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -1px;
             margin-bottom: 12px;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
-        .summary-card p { line-height: 1.7; color: #b0bec5; }
+        .header .date { 
+            display: inline-block;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: #cbd5e1; 
+            font-size: 14px; 
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-        /* Stats Grid */
+        /* Section Headings */
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Stats Grid (Bento Style) */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
         }
         .stat-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 14px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-card .number { font-size: 36px; font-weight: 700; }
-        .stat-card .label { font-size: 13px; color: #8a9bb0; margin-top: 4px; }
-        .stat-positive .number { color: #00e676; }
-        .stat-negative .number { color: #ff5252; }
-        .stat-neutral .number { color: #ffd740; }
-        .stat-total .number { color: #40c4ff; }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 4px;
+            opacity: 0.5;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .stat-card .number { font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 8px; font-family: 'Inter', sans-serif;}
+        .stat-card .label { font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
+        
+        .stat-total::after { background: #3b82f6; }
+        .stat-positive::after { background: var(--positive); }
+        .stat-negative::after { background: var(--negative); }
+        .stat-neutral::after { background: var(--neutral); }
+        
+        .stat-positive .number { color: var(--positive); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .stat-negative .number { color: var(--negative); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        .stat-neutral .number { color: var(--neutral); text-shadow: 0 0 20px rgba(234, 179, 8, 0.4); }
 
         /* Sentiment Bar */
-        .sentiment-bar-container { margin-bottom: 24px; }
+        .sentiment-bar-container { padding: 8px 0; }
         .sentiment-bar {
             display: flex;
-            height: 12px;
-            border-radius: 6px;
+            height: 16px;
+            border-radius: 8px;
             overflow: hidden;
-            background: rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
-        .sentiment-bar .positive { background: linear-gradient(90deg, #00c853, #69f0ae); }
-        .sentiment-bar .negative { background: linear-gradient(90deg, #ff1744, #ff5252); }
-        .sentiment-bar .neutral { background: linear-gradient(90deg, #ffc107, #ffd740); }
+        .sentiment-bar > div { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sentiment-bar .positive { background: var(--positive); box-shadow: 0 0 10px var(--positive); z-index: 3;}
+        .sentiment-bar .negative { background: var(--negative); box-shadow: 0 0 10px var(--negative); z-index: 2;}
+        .sentiment-bar .neutral { background: var(--neutral); }
+        
         .bar-legend {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 10px;
-            font-size: 13px;
-            color: #8a9bb0;
+            justify-content: space-between;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
-        .bar-legend span::before {
-            content: '';
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-        .bar-legend .leg-positive::before { background: #00e676; }
-        .bar-legend .leg-negative::before { background: #ff5252; }
-        .bar-legend .leg-neutral::before { background: #ffd740; }
+        .bar-legend span { display: flex; align-items: center; gap: 8px; }
+        .bar-legend span::before { content: ''; width: 12px; height: 12px; border-radius: 4px; }
+        .leg-positive::before { background: var(--positive); box-shadow: 0 0 8px var(--positive); }
+        .leg-negative::before { background: var(--negative); box-shadow: 0 0 8px var(--negative); }
+        .leg-neutral::before { background: var(--neutral); }
 
         /* Risk Alert */
         .risk-alert {
-            background: rgba(255,23,68,0.1);
-            border: 1px solid rgba(255,23,68,0.3);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 24px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 6px solid var(--negative);
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
         }
-        .risk-alert .icon { font-size: 24px; }
-        .risk-alert .text { color: #ff8a80; line-height: 1.6; }
+        .risk-alert .icon { font-size: 28px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .risk-alert .text { color: #fecaca; font-weight: 500; font-size: 15px; }
+
+        /* Insight Card Special Styling */
+        .insight-card {
+            border-left: 4px solid var(--sbx-green);
+            background: linear-gradient(90deg, rgba(0,112,74,0.1) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        .insight-content {
+            font-size: 15px;
+            color: #f1f5f9;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+        }
 
         /* Topics */
         .topics {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: 12px;
         }
         .topic-tag {
-            background: rgba(0,212,170,0.15);
-            color: #00d4aa;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            border: 1px solid rgba(0,212,170,0.2);
+            background: rgba(0, 112, 74, 0.2);
+            color: #6ee7b7;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(0, 112, 74, 0.5);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .topic-tag:hover {
+            background: rgba(0, 112, 74, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,112,74,0.3);
         }
 
         /* Articles */
-        .articles-section h2 {
-            font-size: 18px;
-            color: #00d4aa;
-            margin-bottom: 16px;
-        }
         .article-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: background 0.2s;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.2s;
+            position: relative;
         }
-        .article-card:hover { background: rgba(255,255,255,0.07); }
+        .article-card:hover { 
+            background: rgba(255,255,255,0.04); 
+            border-color: rgba(255,255,255,0.15);
+            transform: translateX(4px);
+        }
         .article-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: #78909c;
+            margin-bottom: 12px;
+        }
+        .article-source {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .article-source::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #64748b;
         }
         .sentiment-badge {
-            padding: 3px 10px;
-            border-radius: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
+            letter-spacing: 0.5px;
         }
-        .badge-positive { background: rgba(0,230,118,0.15); color: #69f0ae; }
-        .badge-negative { background: rgba(255,82,82,0.15); color: #ff8a80; }
-        .badge-neutral { background: rgba(255,215,64,0.15); color: #ffd740; }
+        .badge-positive { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);}
+        .badge-negative { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);}
+        .badge-neutral { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3);}
+        
         .article-card h3 {
-            font-size: 15px;
-            margin-bottom: 6px;
-            font-weight: 500;
+            font-size: 18px;
+            margin-bottom: 10px;
+            line-height: 1.4;
         }
         .article-card h3 a {
-            color: #e0e0e0;
+            color: #f8fafc;
             text-decoration: none;
+            transition: color 0.2s;
         }
-        .article-card h3 a:hover { color: #00d4aa; }
-        .article-card .snippet { font-size: 13px; color: #90a4ae; line-height: 1.6; }
-        .article-card .analysis { font-size: 13px; color: #80cbc4; margin-top: 6px; font-style: italic; }
+        .article-card h3 a:hover { color: #34d399; }
+        .article-card .snippet { 
+            font-size: 14px; 
+            color: var(--text-secondary); 
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .article-card .analysis { 
+            font-size: 14px; 
+            color: #6ee7b7; 
+            background: rgba(110, 231, 183, 0.05);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border-left: 3px solid #6ee7b7;
+            font-weight: 500;
+        }
 
         /* Footer */
         .footer {
             text-align: center;
-            padding: 30px;
-            color: #546e7a;
-            font-size: 12px;
+            padding: 40px 0 20px 0;
+            color: #475569;
+            font-size: 13px;
+        }
+        
+        /* Layout adjustments */
+        .grid-2-col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2-col { grid-template-columns: 1fr; }
+            .bar-legend { flex-direction: column; gap: 10px; align-items: center; }
+            .header { padding: 32px 20px; }
+            .header h1 { font-size: 32px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
-        <div class="header">
+        <div class="header glass-card" style="border-radius: 32px; padding: 40px;">
             <div class="logo">☕</div>
-            <h1>Starbucks 輿情日報</h1>
-            <div class="date">📅 {{ report_date }} 自動產生</div>
+            <h1>Starbucks 輿情智庫</h1>
+            <div class="date">📅 報告時間：{{ report_date }}</div>
         </div>
 
-        <!-- Overall Summary -->
-        <div class="summary-card">
-            <h2>📊 今日摘要</h2>
-            <p>{{ overall_summary }}</p>
-        </div>
+        <div class="grid-2-col">
+            <!-- Left Column -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Overall Summary -->
+                <div class="glass-card">
+                    <h2>📊 今日總結</h2>
+                    <p style="color: #cbd5e1;">{{ overall_summary }}</p>
+                </div>
 
-        {% if business_insight %}
-        <!-- Business Insight -->
-        <div class="summary-card" style="border-left: 4px solid #00d4aa;">
-            <h2>💡 AI 商業與公關洞察</h2>
-            <p style="white-space: pre-wrap;">{{ business_insight }}</p>
-        </div>
-        {% endif %}
+                {% if business_insight %}
+                <!-- Business Insight -->
+                <div class="glass-card insight-card">
+                    <h2>💡 AI 商業與公關洞察</h2>
+                    <div class="insight-content">{{ business_insight }}</div>
+                </div>
+                {% endif %}
 
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card stat-total">
-                <div class="number">{{ total_count }}</div>
-                <div class="label">總文章數</div>
+                <!-- Risk Alert -->
+                {% if risk_alert %}
+                <div class="glass-card risk-alert">
+                    <span class="icon">🚨</span>
+                    <div class="text">{{ risk_alert }}</div>
+                </div>
+                {% endif %}
             </div>
-            <div class="stat-card stat-positive">
-                <div class="number">{{ positive_count }}</div>
-                <div class="label">正面</div>
-            </div>
-            <div class="stat-card stat-negative">
-                <div class="number">{{ negative_count }}</div>
-                <div class="label">負面</div>
-            </div>
-            <div class="stat-card stat-neutral">
-                <div class="number">{{ neutral_count }}</div>
-                <div class="label">中立</div>
-            </div>
-        </div>
 
-        <!-- Sentiment Bar -->
-        {% if total_count > 0 %}
-        <div class="sentiment-bar-container">
-            <div class="sentiment-bar">
-                <div class="positive" style="width: {{ positive_pct }}%"></div>
-                <div class="negative" style="width: {{ negative_pct }}%"></div>
-                <div class="neutral" style="width: {{ neutral_pct }}%"></div>
-            </div>
-            <div class="bar-legend">
-                <span class="leg-positive">正面 {{ positive_pct }}%</span>
-                <span class="leg-negative">負面 {{ negative_pct }}%</span>
-                <span class="leg-neutral">中立 {{ neutral_pct }}%</span>
-            </div>
-        </div>
-        {% endif %}
+            <!-- Right Column -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="glass-card stat-card stat-total" style="padding: 20px;">
+                        <div class="number">{{ total_count }}</div>
+                        <div class="label">文章總攬</div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="glass-card stat-card stat-positive" style="padding: 20px;">
+                        <div class="number">{{ positive_count }}</div>
+                        <div class="label">正面好感</div>
+                    </div>
+                    <div class="glass-card stat-card stat-negative" style="padding: 20px;">
+                        <div class="number">{{ negative_count }}</div>
+                        <div class="label">負面預警</div>
+                    </div>
+                </div>
 
-        <!-- Risk Alert -->
-        {% if risk_alert %}
-        <div class="risk-alert">
-            <span class="icon">🚨</span>
-            <div class="text">{{ risk_alert }}</div>
-        </div>
-        {% endif %}
+                <!-- Sentiment Bar -->
+                {% if total_count > 0 %}
+                <div class="glass-card">
+                    <h2 style="font-size: 16px; margin-bottom: 16px;">情緒分佈圖</h2>
+                    <div class="sentiment-bar-container">
+                        <div class="sentiment-bar">
+                            <div class="positive" style="width: {{ positive_pct }}%"></div>
+                            <div class="neutral" style="width: {{ neutral_pct }}%"></div>
+                            <div class="negative" style="width: {{ negative_pct }}%"></div>
+                        </div>
+                        <div class="bar-legend">
+                            <span class="leg-positive">正面 {{ positive_pct }}%</span>
+                            <span class="leg-neutral">中立 {{ neutral_pct }}%</span>
+                            <span class="leg-negative">負面 {{ negative_pct }}%</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
-        <!-- Key Topics -->
-        {% if key_topics %}
-        <div class="summary-card">
-            <h2>🏷️ 關鍵議題</h2>
-            <div class="topics" style="margin-top: 12px;">
-                {% for topic in key_topics %}
-                <span class="topic-tag">{{ topic }}</span>
-                {% endfor %}
+                <!-- Key Topics -->
+                {% if key_topics %}
+                <div class="glass-card">
+                    <h2 style="font-size: 16px;">🏷️ 熱門關鍵字</h2>
+                    <div class="topics" style="margin-top: 16px;">
+                        {% for topic in key_topics %}
+                        <span class="topic-tag">{{ topic }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Articles List -->
-        <div class="articles-section">
-            <h2>📰 文章列表（共 {{ total_count }} 篇）</h2>
+        <div class="articles-section" style="margin-top: 16px;">
+            <h2 style="margin-bottom: 24px; font-size: 24px;">📰 相關文獻列表 <span style="font-size: 14px; color: #64748b; font-weight: 400; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; vertical-align: middle; margin-left: 8px;">共搜集 {{ total_count }} 篇</span></h2>
             {% for article in articles %}
             <div class="article-card">
                 <div class="article-meta">
-                    <span>{{ article.source }} ・ {{ article.published_date }}</span>
+                    <div class="article-source">{{ article.source }}<span style="opacity: 0.5;">|</span>{{ article.published_date }}</div>
                     <span class="sentiment-badge badge-{{ 'positive' if article.sentiment == '正面' else ('negative' if article.sentiment == '負面' else 'neutral') }}">
                         {{ article.sentiment }}
                         {% if article.sentiment_score is defined %}
@@ -286,10 +419,10 @@
                 </div>
                 <h3><a href="{{ article.link }}" target="_blank">{{ article.title }}</a></h3>
                 {% if article.snippet %}
-                <div class="snippet">{{ article.snippet[:150] }}{% if article.snippet|length > 150 %}...{% endif %}</div>
+                <div class="snippet">{{ article.snippet }}</div>
                 {% endif %}
                 {% if article.analysis_brief %}
-                <div class="analysis">💬 {{ article.analysis_brief }}</div>
+                <div class="analysis">💬 洞察：{{ article.analysis_brief }}</div>
                 {% endif %}
             </div>
             {% endfor %}
